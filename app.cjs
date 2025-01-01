@@ -15,4 +15,6 @@ app.get('/', (req, res) => {
     res.render('index')
 })
 
+app.use('/', require('./routes/ui.cjs'))
+
 module.exports = app
