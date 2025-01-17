@@ -30,7 +30,6 @@ async function getData() {
 }
 
 function makeTable(data) {
-    //console.log('mt', document.querySelector("#from").value, document.querySelector("#to").value)
     $("body").append("<table>");
     $("table").addClass("table");
 

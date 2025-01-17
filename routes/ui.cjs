@@ -5,7 +5,10 @@ const ui = new Router()
 
 ui.get('/cashflow', (req, res) => {
     res.render('cashflow')
+})
 
+ui.get('/payments', (req, res) => {
+    res.render('payments')
 })
 
 ui.get('/payment/new', (req, res) => {
