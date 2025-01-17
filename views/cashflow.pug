@@ -1,0 +1,11 @@
+extends layout.pug
+block scripts
+    script(src="./cashflow.js" defer)
+block content 
+    form
+        label(for="from") From
+        input#from(type="date")
+        br
+        label(for="to") To
+        input#to(type="date")
+    

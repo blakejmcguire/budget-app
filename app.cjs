@@ -16,5 +16,6 @@ app.get('/', (req, res) => {
 })
 
 app.use('/', require('./routes/ui.cjs'))
+app.use('/api', require('./routes/api.cjs'))
 
 module.exports = app
