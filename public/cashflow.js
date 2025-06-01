@@ -17,8 +17,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 })
 
 async function update() {
-    document.querySelector("table").remove();
-    makeTable(getPayments(await getData()))
+    t = document.querySelector("table");
+    if (t) 
+        // Remove the existing table if it exists
+        t.remove();
+    makeTable(await getData())
 }
 
 async function getData() {
