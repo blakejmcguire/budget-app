@@ -1,11 +1,15 @@
 class Line {
     constructor(data) {
         Line.validate(data)
-
         this.name = data.name;
         this.amount = data.amount;
         this.paymentsPerYear = data.paymentsPerYear;
-        this.index = Line.getIndex(data.paymentsPerYear, data.date);
+        if (typeof data.index == "number") {
+            this.index = data.index
+        }
+        else {
+            this.index = Line.getIndex(data.paymentsPerYear, data.date);
+        }
     }
 
     static validate(data) {
@@ -24,19 +28,23 @@ class Line {
             throw new Error(`Cannot construct payment "${data.name}". Line amount ${data.amount} must be a number.`)
         }
 
-        if (!(data.date instanceof Date)) {
-            if (/^([0-9]{4}-[0-9]{2}-[0-9]{2})$/.test(data.date)) {
-                let inputMonth = data.date.slice(5, 7);
-                let test = new Date(data.date);
+        if (typeof data.index == "undefined") {
+            if (!(data.date instanceof Date)) {
+                if (/^([0-9]{4}-[0-9]{2}-[0-9]{2})$/.test(data.date)) {
+                    let inputMonth = data.date.slice(5, 7);
+                    let test = new Date(data.date);
 
-                if (test.getUTCMonth() + 1 !== parseInt(inputMonth)) {
-                    throw new Error(`Date string ${data.date} is invalid. Converts to ${test.toISOString().slice(0,10)} due to rollover.`);
+                    if (test.getUTCMonth() + 1 !== parseInt(inputMonth)) {
+                        throw new Error(`Date string ${data.date} is invalid. Converts to ${test.toISOString().slice(0, 10)} due to rollover.`);
+                    }
+                    data.date = test;
+                } else {
+                    throw new Error(`Payment example date ${data.date} is invalid. Must be a Date object or a string matching ISO format "yyyy-mm-dd"`);
                 }
-                data.date = test;
-            } else {
-                throw new Error(`Payment example date ${data.date} is invalid. Must be a Date object or a string matching ISO format "yyyy-mm-dd"`);
             }
         }
+
+
         if (typeof paymentsPerYear !== "number") {
             data.paymentsPerYear = parseInt(data.paymentsPerYear)
         }
@@ -70,7 +78,7 @@ class Line {
         let ed = new Date(endDate)
         while (intermediate < ed) {
             intermediate.setTime(this.nextPayment(intermediate).getTime());
-            if(intermediate > ed) break;
+            if (intermediate > ed) break;
             arr.push(intermediate.toISOString().slice(0, 10));
             intermediate.setTime(intermediate.getTime() + 86400000)
         }
@@ -79,12 +87,23 @@ class Line {
 
     static getIndex(paymentsPerYear, date) {
         let index;
+        let d;
+        if(!(date instanceof Date)) {
+            d = new Date(d)
+        }
+        else if(date instanceof Date) {
+            d = date
+        }
+        else {
+            throw new Error('problem with dates in getIndex function')
+        }
+
         switch (paymentsPerYear) {
-            case 12: index = Line.getMonthlyIndex(date);
+            case 12: index = Line.getMonthlyIndex(d);
                 break;
-            case 52: index = Line.getDailyIndex(date, 7);
+            case 52: index = Line.getDailyIndex(d, 7);
                 break;
-            case 26: index = Line.getDailyIndex(date, 14);
+            case 26: index = Line.getDailyIndex(d, 14);
                 break;
         }
         return index;
@@ -136,8 +155,6 @@ class Line {
         let fromDateIndex = Line.getDailyIndex(fromDate, period);
         let difference = index - fromDateIndex;
 
-        //console.log(`Payment Index:\t${paymentIndex}\nfromDate:\t\t${fromDate.toISOString()}\nPeriod:\t\t\t${period}\nfromDateIndex:\t${fromDateIndex}\nDifference:\t\t${difference}`)
-
         if (difference < 0) {
             difference += period;
         }
@@ -165,3 +182,5 @@ class Line {
         return next;
     }
 }
+
+module.exports = Line
