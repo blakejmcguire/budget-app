@@ -4,7 +4,7 @@
   "description": "A simple cashflow and budgeting app for personal finance",
   "main": "server.cjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node ./tests/test.js",
     "dev": "nodemon server.cjs"
   },
   "author": "Blake McGuire",

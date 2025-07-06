@@ -6,6 +6,9 @@ class User {
         this.userID = userID
         this.budget = new Budget(this.userID)
         this.cashflow = new Cashflow(this.userID)
+
+        this.budget.loadData(this.userID)
+        this.cashflow.loadData(this.userID)
     }
 
     getBudget() {
@@ -19,6 +22,11 @@ class User {
     save() {
         this.budget.writeData()
         this.cashflow.writeData()
+    }
+
+    load() {
+        this.budget.loadData(this.userID)
+        this.budget.loadData(this.userID)
     }
 }
 

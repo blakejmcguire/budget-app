@@ -25,7 +25,7 @@ class Cashflow {
     loadData() {
         // Retrieve details about budgeted items from database
         try {
-            let data = fs.readFileSync(`${this.userID}-Cashflow.txt`, 'utf8')
+            let data = fs.readFileSync(`./tests/${this.userID}-Cashflow.txt`, 'utf8')
             this.items = JSON.parse(data)
         }
         catch (error) {
@@ -44,7 +44,7 @@ class Cashflow {
     writeData() {
         // Write updateed data to the database
         fs.writeFileSync(
-            `${this.userID}-Cashflow.txt`,
+            `./tests/${this.userID}-Cashflow.txt`,
             JSON.stringify(this.items),
             err => {
                 if (err) {
@@ -65,9 +65,12 @@ class Cashflow {
             fingerprint: Cashflow.getFingerprint(data)
         }
         
-        this.items.find(item => (item.fingerprint == newItem.fingerprint))
-
-        this.items.push(newItem)
+        if(this.items.find(item => (item.fingerprint == newItem.fingerprint))) {
+            console.error(`Item already exists:\nname: ${newItem.name}\namount: ${newItem.amount}\ndate: ${newItem.date}\n`)
+        }
+        else {
+            this.items.push(newItem)
+        }
     }
     
     getItems() {

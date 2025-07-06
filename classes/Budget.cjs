@@ -18,7 +18,7 @@ class Budget {
     loadData() {
         // Retrieve details about budgeted items from database
         try {
-            let data = fs.readFileSync(`${this.userID}-Budget.txt`, 'utf8')
+            let data = fs.readFileSync(`./tests/${this.userID}-Budget.txt`, 'utf8')
             let dataObj = JSON.parse(data)
             dataObj.forEach(item => {
                 this.items.push(new Line({
@@ -45,7 +45,7 @@ class Budget {
     writeData() {
         // Write updateed data to the database
         fs.writeFileSync(
-            `${this.userID}-Budget.txt`,
+            `./tests/${this.userID}-Budget.txt`,
             JSON.stringify(this.items),
             err => {
                 if (err) {
