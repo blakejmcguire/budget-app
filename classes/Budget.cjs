@@ -1,6 +1,5 @@
 const testData = require('../testData.js')
 const fs = require('fs')
-
 const Line = require('./Line.cjs')
 
 class Budget {
@@ -22,6 +21,7 @@ class Budget {
             let dataObj = JSON.parse(data)
             dataObj.forEach(item => {
                 this.items.push(new Line({
+                    id: item.id,
                     name: item.name,
                     amount: item.amount,
                     paymentsPerYear: item.paymentsPerYear,
@@ -60,6 +60,14 @@ class Budget {
         return this.items
     }
 
+    getItem(id) {
+        let match = ''
+        this.items.forEach(item => {
+            if(item.id = id) match = item
+        })
+        return match
+    }
+
     setItems(data) {
         this.items = data
 
@@ -69,6 +77,22 @@ class Budget {
     addItem(data) {
         let newItem = new Line(data)
         this.items.push(newItem)
+    }
+
+    editItem(id, data) {
+        let item = this.getItem(id)
+        console.log(item)
+
+
+        
+        let newLine = new Line(data)
+        
+        item.name = newLine.name || item.name,
+        item.amount = newLine.amount || item.amount,
+        item.date = newLine.date || item.date,
+        item.paymentsPerYear = newLine.paymentsPerYear || item.paymentsPerYear
+
+        return item
     }
 
     scheduleBetween(fromDate, toDate) {

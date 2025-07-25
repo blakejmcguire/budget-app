@@ -1,3 +1,5 @@
+const crypto = require('crypto')
+
 class Line {
     constructor(data) {
         Line.validate(data)
@@ -10,6 +12,21 @@ class Line {
         else {
             this.index = Line.getIndex(data.paymentsPerYear, data.date);
         }
+
+        this.id = Line.generateId(data)
+
+    }
+
+    static generateId(data) {
+        let name = String(data.name)
+        let date = String(data.date)
+
+        let n = name.toLowerCase().replaceAll(/\s/g, '')
+        let d = date.replaceAll(/\s|-/g, '')
+        let hash = crypto.createHash('sha1')
+        hash.update(n)
+        hash.update(d)
+        return hash.digest('hex')
     }
 
     static validate(data) {
