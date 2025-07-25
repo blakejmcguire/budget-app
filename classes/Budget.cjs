@@ -31,7 +31,7 @@ class Budget {
         }
         catch (error) {
             if (error.code == 'ENOENT') {
-                console.log('No pre-existing data for user', this.userID)
+                //console.log('No pre-existing data for user', this.userID)
             }
             else {
                 console.error(error)
@@ -61,11 +61,13 @@ class Budget {
     }
 
     getItem(id) {
-        let match = ''
+        let found = false
         this.items.forEach(item => {
-            if(item.id == id) match = item
+            if(item.id == id) found = item
         })
-        return match
+
+        if(!found) throw new Error('Item not found in Budget')
+        return found
     }
 
     setItems(data) {
@@ -76,22 +78,19 @@ class Budget {
 
     addItem(data) {
         let newItem = new Line(data)
-
         let found = false
 
         this.items.forEach(item => {
-            //console.log(`item.id = ${item.id}\nnewItem.id = ${newItem.id}\n(item.id == newItem.id)) ${(item.id == newItem.id)}`)
             if(item.id == newItem.id) found = true
         })
-        //console.log(found)
 
         if(found) {
             console.log('Duplicate item, not added')
         }
         else {    
             this.items.push(newItem)
+            return newItem.id
         }
-        
     }
 
     editItem(id, data) {
@@ -109,10 +108,16 @@ class Budget {
     }
 
     deleteItem(id) {
-        let item = this.getItem(id)
-        let index = this.items.indexOf(item)
-        if(index > -1) {
-            this.items.splice(index, 1)
+        try {
+            let item = this.getItem(id)
+            let index = this.items.indexOf(item)
+            if(index > -1) {
+                this.items.splice(index, 1)
+            }
+        }
+        catch(error) {
+            console.log(error)
+            console.log('Item could not be deleted')
         }
         return
     }
