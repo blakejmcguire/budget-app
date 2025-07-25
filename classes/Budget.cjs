@@ -63,7 +63,7 @@ class Budget {
     getItem(id) {
         let match = ''
         this.items.forEach(item => {
-            if(item.id = id) match = item
+            if(item.id == id) match = item
         })
         return match
     }
@@ -76,23 +76,45 @@ class Budget {
 
     addItem(data) {
         let newItem = new Line(data)
-        this.items.push(newItem)
+
+        let found = false
+
+        this.items.forEach(item => {
+            //console.log(`item.id = ${item.id}\nnewItem.id = ${newItem.id}\n(item.id == newItem.id)) ${(item.id == newItem.id)}`)
+            if(item.id == newItem.id) found = true
+        })
+        //console.log(found)
+
+        if(found) {
+            console.log('Duplicate item, not added')
+        }
+        else {    
+            this.items.push(newItem)
+        }
+        
     }
 
     editItem(id, data) {
+
         let item = this.getItem(id)
-        console.log(item)
-
-
         
-        let newLine = new Line(data)
+        Line.validate(data)
         
-        item.name = newLine.name || item.name,
-        item.amount = newLine.amount || item.amount,
-        item.date = newLine.date || item.date,
-        item.paymentsPerYear = newLine.paymentsPerYear || item.paymentsPerYear
+        item.name = data.name || item.name,
+        item.amount = data.amount || item.amount,
+        item.index = Line.getIndex(data.date) || item.index,
+        item.paymentsPerYear = data.paymentsPerYear || item.paymentsPerYear
 
         return item
+    }
+
+    deleteItem(id) {
+        let item = this.getItem(id)
+        let index = this.items.indexOf(item)
+        if(index > -1) {
+            this.items.splice(index, 1)
+        }
+        return
     }
 
     scheduleBetween(fromDate, toDate) {

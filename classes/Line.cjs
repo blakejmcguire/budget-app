@@ -19,14 +19,17 @@ class Line {
 
     static generateId(data) {
         let name = String(data.name)
-        let date = String(data.date)
+        let amount = String(data.amount)
+        let paymentsPerYear = String(data.paymentsPerYear)
+        let index = Line.getIndex(data.paymentsPerYear, data.date)
 
-        let n = name.toLowerCase().replaceAll(/\s/g, '')
-        let d = date.replaceAll(/\s|-/g, '')
+        let str = name + amount + paymentsPerYear + index
+
+        str = str.toLowerCase().replaceAll(/\s|\./g, '')
         let hash = crypto.createHash('sha1')
-        hash.update(n)
-        hash.update(d)
-        return hash.digest('hex')
+        hash.update(str)
+        let hex = hash.digest('hex')
+        return hex
     }
 
     static validate(data) {
