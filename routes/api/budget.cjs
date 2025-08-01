@@ -15,7 +15,16 @@ budgetApi.get('/:userId/:itemId', (req, res) => {
     let user = new User(req.params.userId)
     console.log(req.params.itemId)
     let budgetItem = user.budget.getItem(req.params.itemId)
-    res.send(budgetItem)
+    let responseObject = {
+        id: budgetItem.id,
+        name: budgetItem.name,
+        amount: budgetItem.amount,
+        paymentsPerYear: budgetItem.paymentsPerYear,
+        index: budgetItem.index,
+        nextPayment: budgetItem.nextPayment(new Date())
+    }
+
+    res.send(responseObject)
 })
 
 budgetApi.post('*', (req, res, next) => {

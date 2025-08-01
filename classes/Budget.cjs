@@ -65,7 +65,6 @@ class Budget {
         this.items.forEach(item => {
             if(item.id == id) found = item
         })
-
         if(!found) throw new Error('Item not found in Budget')
         return found
     }
