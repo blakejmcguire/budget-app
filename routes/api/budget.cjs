@@ -28,8 +28,15 @@ budgetApi.post('/add', (req, res) => {
 })
 
 budgetApi.post('/edit', (req, res) => {
-    let itemId = req.body.id
-    let user = new User(req.body.userId) 
+    let updatedItem = req.user.budget.editItem(req.body.itemId, {
+        name: req.body.name,
+        amount: req.body.amount,
+        index: req.body.index,
+        date: req.body.date,
+        paymentsPerYear: req.body.paymentsPerYear
+    })
+    req.user.save()
+    res.send(updatedItem)
 })
 
 budgetApi.post('/delete', (req, res) => {
