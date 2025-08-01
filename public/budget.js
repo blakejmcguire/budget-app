@@ -34,22 +34,34 @@ function makeTable(data) {
 async function editMode(itemId) {
     let item = await getSingleItem($('#userId').val(), itemId)
 
-    console.log(item)
     $('#edit-id-field').val(item.id)
     $('#edit-name-field').val(item.name)
     $('#edit-amount-field').val(item.amount)
     $('#edit-frequency-field').val(item.paymentsPerYear).trigger('change')
+    $('#edit-date-field').val(item.nextPayment)
 
 
     $('#editModal').modal('toggle')
 }
 
 async function editSubmit() {
-    let res = await fetch(`/api/budget/${userId}/${itemId}/edit`, {
+    let userId = $('#userId').val()
+    let item = {
+        id: $('#edit-id-field').val(),
+        name: $('#edit-name-field').val(),
+        amount: $('#edit-amount-field').val(),
+        date: $('#edit-date-field').val(),
+        paymentsPerYear: $('#edit-frequency-field').val()
+    }
+    console.log(userId)
+    console.log(item.id)
+
+    let res = await fetch(`/api/budget/${userId}/${item.id}/edit`, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: json.stringify({
+            body: JSON.stringify({
                 "name": item.name,
                 "date": item.date,
                 "amount": item.amount,
@@ -57,6 +69,10 @@ async function editSubmit() {
             })
         }
     )
+    let json = await res.json()
+
+    $('#editModal').modal('toggle')
+    buildContent()
 }
 
 function frequency(paymentsPerYear) {
@@ -91,5 +107,7 @@ $( () => {
         e.preventDefault()
         buildContent()
     })
-    $('td').on('click', () => {console.log('click')})
+    $('#save-button').on('click', () => {
+        editSubmit()
+    })
 } )

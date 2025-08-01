@@ -23,8 +23,11 @@ block content
                                 option(value="24") Semimonthly
                                 option(value="26") Biweekly
                                 option(value="52") Weekly
+                        .mb3 
+                            label.form-label(for="edit-date-field") Date 
+                            input#edit-date-field.form-control(type="date" name="date")
                 .modal-footer 
-                    button.btn.btn-primary Save 
+                    button#save-button.btn.btn-primary Save 
                     button.btn.btn-secondary(onclick="$('#editModal').modal('toggle')") Cancel
     button.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#editModal") Open Modal
 

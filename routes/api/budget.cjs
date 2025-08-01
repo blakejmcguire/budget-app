@@ -13,7 +13,6 @@ budgetApi.get('/:userId', (req, res) => {
 
 budgetApi.get('/:userId/:itemId', (req, res) => {
     let user = new User(req.params.userId)
-    console.log(req.params.itemId)
     let budgetItem = user.budget.getItem(req.params.itemId)
     let responseObject = {
         id: budgetItem.id,
@@ -21,45 +20,47 @@ budgetApi.get('/:userId/:itemId', (req, res) => {
         amount: budgetItem.amount,
         paymentsPerYear: budgetItem.paymentsPerYear,
         index: budgetItem.index,
-        nextPayment: budgetItem.nextPayment(new Date())
+        nextPayment: budgetItem.nextPayment(new Date()).toISOString().split('T')[0]
     }
 
     res.send(responseObject)
 })
 
-budgetApi.post('*', (req, res, next) => {
-    req.user = new User(req.body.userId)
-    next()
-})
-
-budgetApi.post('/add', (req, res) => {
+budgetApi.post('/:userId/add', (req, res) => {
+    let user = new User(req.params.userId)
     let newItem = {
         name: req.body.name,
         amount: req.body.amount,
         date: req.body.date,
         paymentsPerYear: req.body.paymentsPerYear
     }
-    let newId = req.user.budget.addItem(newItem)
-    req.user.save()
+    let newId = user.budget.addItem(newItem)
+    user.save()
     res.send(newId)
 })
 
-budgetApi.post('/edit', (req, res) => {
-    let updatedItem = req.user.budget.editItevm(req.body.itemId, {
+budgetApi.post('/:userId/:itemId/edit', (req, res) => {
+    let user = new User(req.params.userId)
+    let budgetItem = user.budget.getItem(req.params.itemId)
+    
+    let updatedItem = user.budget.editItem(budgetItem.id, {
         name: req.body.name,
         amount: req.body.amount,
         index: req.body.index,
         date: req.body.date,
         paymentsPerYear: req.body.paymentsPerYear
     })
-    req.user.save()
+
+    user.save()
     res.send(updatedItem)
 })
 
-budgetApi.post('/delete', (req, res) => {
-    let itemId = req.body.id
-    req.user.budget.deleteItem(itemId)
-    req.user.save()
+budgetApi.post('/:userId/:itemId/delete', (req, res) => {
+    let user = new User(req.params.userId)
+    let budgetItem = user.budget.getItem(req.params.itemId)
+
+    user.budget.deleteItem(budgetItem.id)
+    user.save()
     res.sendStatus(200)
 })
 

@@ -93,6 +93,8 @@ class Budget {
     }
 
     editItem(id, data) {
+        console.log(id)
+        console.log(data)
 
         let item = this.getItem(id)
         
