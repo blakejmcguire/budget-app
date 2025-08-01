@@ -5,14 +5,22 @@ const budgetApi = new Router()
 
 const User = require('../../classes/User.cjs')
 
+budgetApi.get('/:userId', (req, res) => {
+    let user = new User(req.params.userId)
+    let budgetItems = user.budget.getItems()
+    res.send(budgetItems)
+})
+
+budgetApi.get('/:userId/:itemId', (req, res) => {
+    let user = new User(req.params.userId)
+    console.log(req.params.itemId)
+    let budgetItem = user.budget.getItem(req.params.itemId)
+    res.send(budgetItem)
+})
+
 budgetApi.post('*', (req, res, next) => {
     req.user = new User(req.body.userId)
     next()
-})
-
-budgetApi.post('/', (req, res) => {
-    let budgetItems = req.user.budget.getItems()
-    res.send(budgetItems)
 })
 
 budgetApi.post('/add', (req, res) => {
@@ -28,7 +36,7 @@ budgetApi.post('/add', (req, res) => {
 })
 
 budgetApi.post('/edit', (req, res) => {
-    let updatedItem = req.user.budget.editItem(req.body.itemId, {
+    let updatedItem = req.user.budget.editItevm(req.body.itemId, {
         name: req.body.name,
         amount: req.body.amount,
         index: req.body.index,

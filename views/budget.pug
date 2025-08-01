@@ -2,3 +2,32 @@ extends layout.pug
 block scripts
     script(src="./budget.js" defer)
 block content 
+    #editModal.modal.fade(tabindex="-1" role="dialog" aria-hidden="true")
+        .modal-dialog(role="document")
+            .modal-content
+                .modal-header
+                    h5.modal-title Edit Form 
+                .modal-body
+                    form#editForm
+                        input#edit-id-field(type="hidden" name="itemId")
+                        .mb3
+                            label.form-label(for="edit-name-field") Name 
+                            input#edit-name-field.form-control(type="text" name="name")
+                        .mb3
+                            label.form-label(for="edit-amount-field") Amount 
+                            input#edit-amount-field.form-control(type="text" name="amount")
+                        .mb3 
+                            label.form-label(for="edit-frequency-field") Frequency 
+                            select#edit-frequency-field.form-select(type="list" name="frequency")
+                                option(value="12") Monthly
+                                option(value="24") Semimonthly
+                                option(value="26") Biweekly
+                                option(value="52") Weekly
+                .modal-footer 
+                    button.btn.btn-primary Save 
+                    button.btn.btn-secondary(onclick="$('#editModal').modal('toggle')") Cancel
+    button.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#editModal") Open Modal
+
+    form#userForm
+        input#userId(type="text" name="userId" value="test")
+        button#userIdSubmit Submit
