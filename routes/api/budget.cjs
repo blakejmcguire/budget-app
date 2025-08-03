@@ -3,17 +3,14 @@ const Router = express.Router
 
 const budgetApi = new Router()
 
-const User = require('../../classes/User.cjs')
-
-budgetApi.get('/:userId', (req, res) => {
-    let user = new User(req.params.userId)
-    let budgetItems = user.budget.getItems()
+budgetApi.post('/', (req, res) => {
+    let budgetItems = req.user.budget.getItems()
     res.send(budgetItems)
 })
 
-budgetApi.get('/:userId/:itemId', (req, res) => {
-    let user = new User(req.params.userId)
-    let budgetItem = user.budget.getItem(req.params.itemId)
+budgetApi.post('/item', (req, res) => {
+    let budgetItem = req.user.budget.getItem(req.body.itemId)
+    console.log(budgetItem)
     let responseObject = {
         id: budgetItem.id,
         name: budgetItem.name,
@@ -26,24 +23,22 @@ budgetApi.get('/:userId/:itemId', (req, res) => {
     res.send(responseObject)
 })
 
-budgetApi.post('/:userId/add', (req, res) => {
-    let user = new User(req.params.userId)
+budgetApi.post('/item/add', (req, res) => {
     let newItem = {
         name: req.body.name,
         amount: req.body.amount,
         date: req.body.date,
         paymentsPerYear: req.body.paymentsPerYear
     }
-    let newId = user.budget.addItem(newItem)
-    user.save()
+    let newId = req.user.budget.addItem(newItem)
+    req.user.save()
     res.send(newId)
 })
 
-budgetApi.post('/:userId/:itemId/edit', (req, res) => {
-    let user = new User(req.params.userId)
-    let budgetItem = user.budget.getItem(req.params.itemId)
+budgetApi.post('/item/edit', (req, res) => {
+    let item = req.user.budget.getItem(req.body.itemId)
     
-    let updatedItem = user.budget.editItem(budgetItem.id, {
+    let updatedItem = req.user.budget.editItem(item.id, {
         name: req.body.name,
         amount: req.body.amount,
         index: req.body.index,
@@ -51,16 +46,15 @@ budgetApi.post('/:userId/:itemId/edit', (req, res) => {
         paymentsPerYear: req.body.paymentsPerYear
     })
 
-    user.save()
+    req.user.save()
     res.send(updatedItem)
 })
 
-budgetApi.post('/:userId/:itemId/delete', (req, res) => {
-    let user = new User(req.params.userId)
-    let budgetItem = user.budget.getItem(req.params.itemId)
+budgetApi.post('/item/delete', (req, res) => {
+    let budgetItem = req.user.budget.getItem(req.body.itemId)
 
-    user.budget.deleteItem(budgetItem.id)
-    user.save()
+    req.user.budget.deleteItem(budgetItem.id)
+    req.user.save()
     res.sendStatus(200)
 })
 

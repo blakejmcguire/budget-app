@@ -27,9 +27,38 @@ block content
                             label.form-label(for="edit-date-field") Date 
                             input#edit-date-field.form-control(type="date" name="date")
                 .modal-footer 
+                    button#delete-button.btn.btn-danger Delete
                     button#save-button.btn.btn-primary Save 
                     button.btn.btn-secondary(onclick="$('#editModal').modal('toggle')") Cancel
-    button.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#editModal") Open Modal
+    #addModal.modal.fade(tabindex="-1" role="dialog" aria-hidden="true")
+        .modal-dialog(role="document")
+            .modal-content
+                .modal-header
+                    h5.modal-title Add Form 
+                .modal-body
+                    form#addForm
+                        input#add-id-field(type="hidden" name="itemId")
+                        .mb3
+                            label.form-label(for="add-name-field") Name 
+                            input#add-name-field.form-control(type="text" name="name")
+                        .mb3
+                            label.form-label(for="add-amount-field") Amount 
+                            input#add-amount-field.form-control(type="text" name="amount")
+                        .mb3 
+                            label.form-label(for="add-frequency-field") Frequency 
+                            select#add-frequency-field.form-select(type="list" name="frequency")
+                                option(value="12") Monthly
+                                option(value="24") Semimonthly
+                                option(value="26") Biweekly
+                                option(value="52") Weekly
+                        .mb3 
+                            label.form-label(for="add-date-field") Date 
+                            input#add-date-field.form-control(type="date" name="date")
+                .modal-footer 
+                    button#add-button.btn.btn-primary Add Item 
+                    button.btn.btn-secondary(onclick="$('#addModal').modal('toggle')") Cancel
+    button.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#editModal") Open Edit Modal
+    button.btn.btn-primary(type="button" data-bs-toggle="modal" data-bs-target="#addModal") Open Add Modal
 
     form#userForm
         input#userId(type="text" name="userId" value="test")
