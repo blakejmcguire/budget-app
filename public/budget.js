@@ -97,7 +97,7 @@ function frequency(paymentsPerYear) {
 async function buildContent() {
     let userId = $('#userId').val()
     let data = await getData(userId)
-    console.log(data)
+    //console.log(data)
     makeTable(data)
 }
 
