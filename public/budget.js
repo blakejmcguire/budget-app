@@ -9,11 +9,16 @@ async function getData(userId) {
         })
     })
     let json = await res.json()
+    json.sort((a, b) => {
+        let aNumber = parseInt(a.nextPayment.replaceAll(/-/g, ''))
+        let bNumber = parseInt(b.nextPayment.replaceAll(/-/g, ''))
+        let result = aNumber - bNumber
+        return result
+    })
     return json
 }
 
 async function getSingleItem(userId, itemId) {
-    //let res = await fetch(`/api/budget/${userId}/${itemId}`)
     let res = await fetch("/api/budget/item", {
         method: "POST",
         headers: {
@@ -36,7 +41,7 @@ function makeTable(data) {
     $("table").addClass("table");
 
     $("table").append("<thead>");
-    $("thead").html("<tr><th>Name</th><th>Amount</th><th>Frequency</th><th>Edit</th></tr>");
+    $("thead").html("<tr><th>Name</th><th>Amount</th><th>Frequency</th><th>Next Payment</th><th>Edit</th></tr>");
     $("thead th").attr("scope", "col")
 
     $("table").append("<tbody>");
@@ -45,7 +50,7 @@ function makeTable(data) {
     data.forEach(datum => {
         let convertedAmount = Number(datum.amount).toFixed(2)
         $("tbody").append(`<tr id="${datum.id}">`)
-        $("tbody>tr:last-child").html(`<td class="name-cell">${datum.name}</td><td class="amount-cell">$${convertedAmount}</td><td class="ppy-cell">${frequency(datum.paymentsPerYear)}</td><td class="edit-cell"><button class="btn btn-primary editButton" onClick="editMode($(this).closest('tr').attr('id'))">Edit</button>`)
+        $("tbody>tr:last-child").html(`<td class="name-cell">${datum.name}</td><td class="amount-cell">$${convertedAmount}</td><td class="ppy-cell">${frequency(datum.paymentsPerYear)}</td><td class="next-payment-cell">${datum.nextPayment}</td><td class="edit-cell"><button class="btn btn-primary editButton" onClick="editMode($(this).closest('tr').attr('id'))">Edit</button>`)
     })
     $("table").append("<tfoot>");
 }
@@ -163,6 +168,10 @@ async function buildContent() {
     let userId = $('#userId').val()
     let data = await getData(userId)
     makeTable(data)
+}
+
+async function sortDate() {
+
 }
 
 $( () => {

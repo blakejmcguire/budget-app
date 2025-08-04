@@ -77,6 +77,7 @@ class Budget {
 
     addItem(data) {
         let newItem = new Line(data)
+
         let found = false
 
         this.items.forEach(item => {
@@ -93,17 +94,14 @@ class Budget {
     }
 
     editItem(id, data) {
-        console.log(id)
-        console.log(data)
-
         let item = this.getItem(id)
-        
+        let itemIndex = this.items.indexOf(item)
+
         Line.validate(data)
+
+        this.items.splice(itemIndex, 1)
         
-        item.name = data.name || item.name,
-        item.amount = data.amount || item.amount,
-        item.index = Line.getIndex(data.date) || item.index,
-        item.paymentsPerYear = data.paymentsPerYear || item.paymentsPerYear
+        this.addItem(data)
 
         return item
     }

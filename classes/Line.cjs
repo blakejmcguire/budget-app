@@ -2,12 +2,6 @@ const crypto = require('crypto')
 
 class Line {
     constructor(data) {
-        if (typeof data.index == "number") {
-            this.index = data.index
-        }
-        else {
-            this.index = Line.getIndex(data.paymentsPerYear, data.date);
-        }
 
         if (typeof data.id == 'undefined') {
             Line.validate(data)
@@ -21,6 +15,16 @@ class Line {
         else {
             this.id = data.id
         }
+
+        if (typeof data.index == "number") {
+            this.index = data.index
+        }
+        else {
+            //console.log(typeof data.paymentsPerYear, data.date)
+            this.index = Line.getIndex(data.paymentsPerYear, data.date);
+        }
+
+
 
         this.name = data.name;
         this.amount = data.amount;
@@ -119,14 +123,19 @@ class Line {
     static getIndex(paymentsPerYear, date) {
         let index;
         let d;
+
         if (!(date instanceof Date)) {
-            d = new Date(d)
+            d = new Date(date)
         }
         else if (date instanceof Date) {
             d = date
         }
         else {
             throw new Error('problem with dates in getIndex function')
+        }
+
+        if (typeof paymentsPerYear != 'number') {
+            paymentsPerYear = parseInt(paymentsPerYear)
         }
 
         switch (paymentsPerYear) {

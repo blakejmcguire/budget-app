@@ -5,12 +5,17 @@ const budgetApi = new Router()
 
 budgetApi.post('/', (req, res) => {
     let budgetItems = req.user.budget.getItems()
+
+    budgetItems.forEach(item => {
+        let date = item.nextPayment()
+        date = date.toISOString().split('T')[0]
+        item.nextPayment = date
+    })
     res.send(budgetItems)
 })
 
 budgetApi.post('/item', (req, res) => {
     let budgetItem = req.user.budget.getItem(req.body.itemId)
-    console.log(budgetItem)
     let responseObject = {
         id: budgetItem.id,
         name: budgetItem.name,
