@@ -6,9 +6,7 @@ const cashflowApi = new Router()
 cashflowApi.post('/getTemp', (req, res) => {
     let from = req.query.from
     let to = req.query.to
-    console.log(from, ' to ', to)
     let cashflow = req.user.budget.scheduleBetween(from, to)
-    console.log(cashflow)
     res.send(cashflow)
 })
 

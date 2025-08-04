@@ -1,6 +1,6 @@
 $(async () => {
-    $("#from").val('2025-01-01')
-    $("#to").val('2025-06-30')
+    $("#from").val('2025-08-01')
+    $("#to").val('2025-08-05')
 
     // Initial build of the data table
     update()
@@ -33,16 +33,20 @@ async function getData() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "userId": "test"
+            "userId": "blake"
         })
     })
     let data = await res.json()
-
+    data.sort((a, b) => {
+        let aNumber = parseInt(a.date.replaceAll(/-/g, ''))
+        let bNumber = parseInt(b.date.replaceAll(/-/g, ''))
+        let result = aNumber - bNumber
+        return result
+    })
     return data
 }
 
 function makeTable(data) {
-    console.log(data)
     $('#cashflow-table').remove()
 
     let $table = $('<table>')
