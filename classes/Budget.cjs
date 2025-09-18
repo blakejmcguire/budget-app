@@ -1,4 +1,3 @@
-const testData = require('../testData.js')
 const fs = require('fs')
 const Line = require('./Line.cjs')
 
