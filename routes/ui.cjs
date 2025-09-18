@@ -16,4 +16,8 @@ ui.get('/payment/new', (req, res) => {
     res.send()
 })
 
+ui.get('/budget', (req, res) => {
+    res.render('budget')
+})
+
 module.exports = ui
