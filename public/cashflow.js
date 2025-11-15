@@ -1,6 +1,9 @@
 $(async () => {
-    $("#from").val('2025-08-01')
-    $("#to").val('2025-08-05')
+    let today = new Date();
+    let later = new Date();
+    later.setDate(later.getDate() + 90);
+    $("#from").val(today.toISOString().split('T')[0])
+    $("#to").val(later.toISOString().split('T')[0])
 
     // Initial build of the data table
     update()
