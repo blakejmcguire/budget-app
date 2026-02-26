@@ -8,17 +8,22 @@ class Budget {
         this.collection = this.db.getClient().collection('budgets')
     }
 
-    async addItem({name, amount, date, paymentsPerYear}) {
+    async addItem({name, amount, date, paymentsPerYear, isCredit, category, subcategory}) {
         const newItem = {
             userId: this.userId,
             name,
             amount,
             date: Budget.ensureDate(date),
             paymentsPerYear,
-            index: Budget.getItemIndex(date, paymentsPerYear) // May need to validate before running this
+            isCredit: isCredit || false,
+            // only include optional fields when they have a value
+            ...(category != null && { category }),
+            ...(subcategory != null && { subcategory }),
         }
 
-        newItem.date = Budget.getYMD(newItem.date)
+        Budget.validate(newItem)
+
+        newItem.index = Budget.getIndex(newItem.date, newItem.paymentsPerYear)
 
         const result = await this.collection.insertOne(newItem)
         return result.insertedId
@@ -65,6 +70,35 @@ class Budget {
         return items
     }
 
+    static validate({name, amount, date, paymentsPerYear, isCredit, category, subcategory}) {
+        if (typeof name !== 'string' || name.trim() === '') {
+            throw new Error('Invalid name')
+        }
+        if (typeof amount !== 'number' || amount <= 0) {
+            throw new Error('Invalid amount')
+        }
+        if (isNaN(Date.parse(date))) {
+            throw new Error('Invalid date')
+        }
+        if (![12, 26, 52].includes(paymentsPerYear)) {
+            throw new Error('Invalid paymentsPerYear')
+        }
+        if (typeof isCredit !== 'boolean') {
+            throw new Error('Invalid isCredit')
+        }
+        if (category != null) {
+            if (typeof category !== 'string' || category.trim() === '') {
+                throw new Error('Invalid category')
+            }
+        }
+        if (subcategory != null) {
+            if (typeof subcategory !== 'string' || subcategory.trim() === '') {
+                throw new Error('Invalid subcategory')
+            }
+        }
+        return true
+    }
+
     static ensureDate(dateValue, userTimezone = 'UTC') {
         if (typeof dateValue === 'string') {
             // Parse ISO string as UTC
@@ -86,20 +120,20 @@ class Budget {
         return `${yyyy}-${mm}-${dd}`
     }
 
-    static getItemIndex(date, paymentsPerYear) {
+    static getIndex(date, paymentsPerYear) {
         switch (paymentsPerYear) {
             case 12:
-                return Budget.getItemMonthlyIndex(date)
+                return Budget.monthlyIndex(date)
             case 52:
-                return Budget.getItemDailyIndex(date, 7)
+                return Budget.dailyIndex(date, 7)
             case 26:
-                return Budget.getItemDailyIndex(date, 14)
+                return Budget.dailyIndex(date, 14)
             default:
                 throw new Error(`Unsupported paymentsPerYear ${paymentsPerYear}`)
         }
     }
 
-    static getItemMonthlyIndex(date) {
+    static monthlyIndex(date) {
         /**
          * Returns the calendar date of the month
          * or -1 if the end of the month.
@@ -123,7 +157,7 @@ class Budget {
         return index;
     }
 
-    static getItemDailyIndex(date, period) {
+    static dailyIndex(date, period) {
     /**
      * Return the position of `date` within a repeating cycle of
      * `period` days.  Result is an integer 0 ≤ index < period.
@@ -140,24 +174,22 @@ class Budget {
         return dayCount % period;
     }
 
-    static async getNextItemPayment(itemId, from) {
+    static nextPayment(from, index, paymentsPerYear) {
         let date = Budget.ensureDate(from)
 
-        let item = await this.getItem(itemId)
-
-        switch (this.paymentsPerYear) {
+        switch (paymentsPerYear) {
             case 12:
-                return Line.getNextItemMonthlyPayment(item.index, date);
+                return Budget.nextMonthlyPayment(index, date);
             case 26:
-                return Line.getNextItemDailyPayment(item.index, date, 14);
+                return Budget.nextDailyPayment(index, date, 14);
             case 52:
-                return Line.getNextItemDailyPayment(item.index, date, 7);
+                return Budget.nextDailyPayment(index, date, 7);
             default:
-                throw new Error(`Unsupported paymentsPerYear ${this.paymentsPerYear}`)
+                throw new Error(`Unsupported paymentsPerYear ${paymentsPerYear}`)
         }
     }
 
-    static getNextItemMonthlyPayment(index, fromDate) {
+    static nextMonthlyPayment(index, fromDate) {
         let next = new Date(fromDate);
         if (index === -1) {
             next.setUTCMonth(next.getUTCMonth() + 1)
@@ -175,14 +207,14 @@ class Budget {
         return next
     }
 
-    static getNextItemDailyPayment(index, fromDate, period) {
+    static nextDailyPayment(index, fromDate, period) {
         let from = Budget.ensureDate(fromDate)
 
-        if (index < -1 || index === 0 || index > 31) {
+        if (index < -1 || index > 31) {
             throw new Error(`Invalid index ${index}`)
         }
 
-        let fromIndex = Line.getDailyIndex(from, period)
+        let fromIndex = Budget.dailyIndex(from, period)
         let difference = index - fromIndex
 
         if (difference < 0) {
