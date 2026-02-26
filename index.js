@@ -1,7 +1,7 @@
 require('dotenv').config()
 
-const Database = require('./Database')
-const Budget = require('./Budget')
+const Database = require('./handlers/Database')
+const Budget = require('./handlers/Budget')
 
 const db = new Database()
 
