@@ -10,7 +10,7 @@ const ObjectId = require('mongodb').ObjectId
  * 
  */
 
-class Users {
+class User {
     constructor(db, userId) {
         this.db = db
         this.collection = this.db.getClient().collection('users')
