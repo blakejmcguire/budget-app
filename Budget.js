@@ -221,7 +221,7 @@ class Budget {
         let fromIndex = Budget.dailyIndex(from, period)
         let difference = index - fromIndex
 
-        if (difference <= 0) {
+        if (difference < 0) {
             difference += period
         }
 
@@ -229,16 +229,6 @@ class Budget {
         output.setUTCDate(output.getUTCDate() + difference)
 
         return output
-    }
-
-    static scheduleBetween(startDate, endDate, index, paymentsPerYear) {
-        let schedule = []
-        let nextPayment = Budget.nextPayment(startDate, index, paymentsPerYear)
-        while (nextPayment <= endDate) {
-            schedule.push(nextPayment)
-            nextPayment = Budget.nextPayment(nextPayment, index, paymentsPerYear)
-        }
-        return schedule
     }
 }
 
