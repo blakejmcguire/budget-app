@@ -8,7 +8,7 @@ class Budget {
         this.collection = this.db.getClient().collection('budgets')
     }
 
-    async addItem({name, amount, date, paymentsPerYear, isCredit, category, subcategory}) {
+    async addItem({ name, amount, date, paymentsPerYear, isCredit, category, subcategory }) {
         const newItem = {
             userId: this.userId,
             name,
@@ -74,7 +74,7 @@ class Budget {
         return items
     }
 
-    static validate({name, amount, date, paymentsPerYear, isCredit, category, subcategory}) {
+    static validate({ name, amount, date, paymentsPerYear, isCredit, category, subcategory }) {
         if (typeof name !== 'string' || name.trim() === '') {
             throw new Error('Invalid name')
         }
@@ -162,13 +162,13 @@ class Budget {
     }
 
     static dailyIndex(date, period) {
-    /**
-     * Return the position of `date` within a repeating cycle of
-     * `period` days.  Result is an integer 0 ≤ index < period.
-     *
-     * `date` may be a Date or an ISO string; it is normalised to
-     * UTC midnight first.
-     */
+        /**
+         * Return the position of `date` within a repeating cycle of
+         * `period` days.  Result is an integer 0 ≤ index < period.
+         *
+         * `date` may be a Date or an ISO string; it is normalised to
+         * UTC midnight first.
+         */
         if (typeof period !== 'number' || period <= 0 || !Number.isInteger(period)) {
             throw new Error(`invalid period ${period}`);
         }
@@ -230,6 +230,23 @@ class Budget {
 
         return output
     }
+
+    static scheduleBetween(fromDate, toDate, index, paymentsPerYear) {
+        const schedule = []
+        let start = Budget.ensureDate(fromDate)
+        const end = Budget.ensureDate(toDate)
+
+        if (start > end) return schedule
+
+        let next = Budget.nextPayment(start, index, paymentsPerYear)
+        while (next <= end) {
+            if (next >= start) schedule.push(next)
+            start = new Date(next.getTime() + MS_PER_DAY)
+            next = Budget.nextPayment(start, index, paymentsPerYear)
+        }
+        return schedule
+    }
+
 }
 
 module.exports = Budget
