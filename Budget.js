@@ -32,6 +32,7 @@ class Budget {
     async getItem(id) {
         let objectId = new ObjectId(id)
         const item = await this.collection.findOne({ _id: objectId, userId: this.userId })
+        item.date = Budget.getYMD(item.date)
         return item
     }
 
@@ -67,6 +68,9 @@ class Budget {
 
     async getAllItems() {
         const items = await this.collection.find({ userId: this.userId }).toArray()
+        items.forEach(item => {
+            item.date = Budget.getYMD(item.date)
+        })
         return items
     }
 
