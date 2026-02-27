@@ -1,16 +1,14 @@
 require('dotenv').config()
+const Server = require('./Server.js')
 
-const Database = require('./handlers/Database')
-const Budget = require('./handlers/Budget')
+const applicationName = process.env.APPLICATION_NAME || 'budget-app-dev'
+const port = process.env.PORT || 3000
 
-const db = new Database()
+const server = new Server(applicationName, port)
 
-async function run() {
-    const test = await db.test()
-    console.log(test)
-
-    db.close()
-}
-
-
-run()
+(async () => {
+    await server.start().catch(error => {
+        console.error('Error starting server:', error)
+        process.exit(1)
+    })
+})()

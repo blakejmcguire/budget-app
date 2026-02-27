@@ -1,10 +1,10 @@
 const { MongoClient, ServerApiVersion } = require('mongodb')
 const uri = process.env.MONGO_URI || ''
-const appName = process.env.APPLICATION_NAME || 'budget-app-dev'
+//const appName = process.env.APPLICATION_NAME || 'budget-app-dev'
 
 class Database {
-    constructor() {
-        this.appName = appName
+    constructor(applicationName) {
+        this.appName = applicationName || 'dev'
         this.client = new MongoClient(uri, {
             serverApi: {
                 version: ServerApiVersion.v1,
