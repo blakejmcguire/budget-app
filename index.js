@@ -6,9 +6,13 @@ const port = process.env.PORT || 3000
 
 const server = new Server(applicationName, port)
 
-(async () => {
-    await server.start().catch(error => {
-        console.error('Error starting server:', error)
+async function main() {
+    try {
+        await server.start()
+    } catch (error) {
+        console.error('Error starting main application:', error)
         process.exit(1)
-    })
-})()
+    }
+}
+
+main()
